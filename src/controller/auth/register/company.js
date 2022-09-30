@@ -2,11 +2,11 @@
 const bcrypt = require('bcrypt');
 
 // requiring database connection
-const mongo = require('../../config/database');
+const mongo = require('../../../config/database');
 
 // requiring register schema
-const Register = require('../../modules/register/company');
-const valid = require('../../utils/validation');
+const Register = require('../../../modules/register/company');
+const valid = require('../../../utils/validation');
 
 module.exports = async (req, res) => {
   // connectiong to database

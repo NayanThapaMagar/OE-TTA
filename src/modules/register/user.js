@@ -5,11 +5,11 @@ const { Schema } = mongoose;
 // creating a schema for registering
 const companyRegisterSchema = new Schema(
   {
-    Company_Name: {
+    Full_Name: {
       type: String,
       requires: true,
     },
-    Country: {
+    User_Name: {
       type: String,
       requires: true,
     },
@@ -17,12 +17,24 @@ const companyRegisterSchema = new Schema(
       type: String,
       requires: true,
     },
-    Company_Contact: {
+    Contact: {
       type: String,
       requires: true,
     },
-    Max_Number_Of_Employee: {
-      type: Number,
+    Email: {
+      type: String,
+      requires: true,
+    },
+    Role: {
+      type: String,
+      requires: true,
+    },
+    Password: {
+      type: String,
+      requires: true,
+    },
+    Company_Obj_Id: {
+      type: String,
       requires: true,
     },
   },

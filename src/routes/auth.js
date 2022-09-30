@@ -4,7 +4,7 @@ const router = express.Router();
 
 // importing controller
 // const login = require("../controller/auth/login");
-const register = require('../controller/auth/register');
+const register = require('../controller/auth/register/company');
 // const addUser = require("../controller/auth/addUser");
 // const logout = require("../controller/auth/logout");
 // const refreshAccessTokenSecret = require("../controller/auth/refreshAccessTokenSecret");
