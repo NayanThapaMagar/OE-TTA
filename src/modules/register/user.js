@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 // creating a schema for registering
-const companyRegisterSchema = new Schema(
+const userRegisterSchema = new Schema(
   {
     Full_Name: {
       type: String,
@@ -42,7 +42,7 @@ const companyRegisterSchema = new Schema(
 );
 
 // wrapping registering schema in an object
-const CpmpanyRegister = mongoose.model('Register', companyRegisterSchema);
+const UserRegister = mongoose.model('UserRegister', userRegisterSchema);
 
 // exporting registering schema
-module.exports = CpmpanyRegister;
+module.exports = UserRegister;

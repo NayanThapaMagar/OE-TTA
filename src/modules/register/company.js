@@ -30,7 +30,8 @@ const companyRegisterSchema = new Schema(
 );
 
 // wrapping registering schema in an object
-const CpmpanyRegister = mongoose.model('Register', companyRegisterSchema);
+const CompanyRegister = mongoose.model('CompanyRegister', companyRegisterSchema);
+// client.db('registration').collection('company');
 
 // exporting registering schema
-module.exports = CpmpanyRegister;
+module.exports = CompanyRegister;

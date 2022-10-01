@@ -2,11 +2,21 @@
 const bcrypt = require('bcrypt');
 
 // requiring database connection
+// const Transaction = require('mongoose-transactions');
+const { MongoClient } = require('mongodb');
+require('dotenv').config();
+
 const mongo = require('../../../config/database');
 
+const uri = process.env.DB_URI;
+const client = new MongoClient(uri);
+
 // requiring register schema
-const Register = require('../../../modules/register/company');
+// const CompanyRegister = require('../../../modules/register/company');
+// const UserRegister = require('../../../modules/register/user');
 const valid = require('../../../utils/validation');
+
+// CompanyObjId:
 
 module.exports = async (req, res) => {
   // connectiong to database
@@ -14,52 +24,123 @@ module.exports = async (req, res) => {
 
   // getting datas(user name, email, contact, password) form body or frontend
   const {
-    userName, email, contact, password, confirmPassword,
+    companyName,
+    country,
+    address,
+    companyContact,
+    maxNumberOfEmployee,
+    userName,
+    companyOwnerName,
+    ownerContact,
+    email,
+    role,
+    password,
+    confirmPassword,
   } = req.body;
   // checking if fields are null
-  if (!userName || !email || !contact || !password || !confirmPassword) { return res.send({ register: false, message: 'All fields not provided' }); }
+  if (
+    !companyName
+    || !country
+    || !address
+    || !companyContact
+    || !maxNumberOfEmployee
+    || !userName
+    || !companyOwnerName
+    || !ownerContact
+    || !email
+    || !role
+    || !password
+    || !confirmPassword
+  ) {
+    return res.send({ register: false, message: 'All fields not provided' });
+  }
   // password validation
-  if (password !== confirmPassword) { return res.send({ register: false, message: "Password doesn't match" }); }
+  if (password !== confirmPassword) {
+    return res.send({ register: false, message: "Password doesn't match" });
+  }
   // contact validation
   // console.log(valid.contact(contact));
-  if (!valid.contact(contact)) { return res.send({ register: false, message: 'Invalid contact' }); }
-  // checking if the root user is already registered
-  if (await Register.findOne({ RoleCode: '777' })) {
-    // root user alresdy registered
-    // redirecting to login page
-    // res.status(401).sendFile(path.join(__dirname, "login.html"));
-    res
-      .status(401)
-      .send({ register: false, message: 'User is already reqistered' });
-  } else {
-    // root user not registered before
-
-    // hassing password and adding salt to it
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // creating an instance of register schema
-    const register = new Register({
-      UserName: userName,
-      Contact: contact,
-      Email: email,
-      Password: hashedPassword,
-      RoleCode: '777', // assigning default value 777
-    });
-
-    // adding new instance to the database(registering new user)
-    await register
-      .save()
-      .then(() => {
-        // user register success
-        res.json({ register: true, message: 'User Registered' });
-      })
-      .catch((err) => {
-        res.send({
-          register: false,
-          message: 'Failed to register root user',
-          reason: err,
-        });
-      });
+  // console.log(valid.contact(companyContact));
+  if (!valid.contact(companyContact)) {
+    return res.send({ register: false, message: 'Invalid company contact' });
   }
+  if (!valid.contact(ownerContact)) {
+    return res.send({ register: false, message: 'Invalid owner contact' });
+  }
+
+  // hassing password and adding salt to it
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  async function start() {
+    const companyCollection = client.db('registration').collection('company');
+    const userCollection = client.db('registration').collection('user');
+    // console.log(companyColasslection);
+    // Step 1: Start a Client Session
+    const session = client.startSession();
+    // Step 2: Optional. Define options for the transaction
+    const transactionOptions = {
+      readPreference: 'primary',
+      readConcern: { level: 'local' },
+      writeConcern: { w: 'majority' },
+    };
+    try {
+      const transactionResults = await session.withTransaction(async () => {
+        // const companyRegister = new CompanyRegister({
+        //   Company_Name: companyName,
+        //   Country: country,
+        //   Address: address,
+        //   Company_Contact: companyContact,
+        //   Max_Number_Of_Employee: maxNumberOfEmployee,
+        // });
+        // // console.log(companyRegister);
+        // const userRegister = new UserRegister({
+        // Full_Name: companyOwnerName,
+        // User_Name: userName,
+        // Address: address,
+        // Contact: ownerContact,
+        // Email: email,
+        // Role: role,
+        // Password: hashedPassword,
+        // // eslint-disable-next-line no-underscore-dangle
+        // Company_Obj_Id: companyRegister._id,
+        // });
+        const companyAddedResults = await companyCollection.insertOne(
+          {
+            Company_Name: companyName,
+            Country: country,
+            Address: address,
+            Company_Contact: companyContact,
+            Max_Number_Of_Employee: maxNumberOfEmployee,
+          },
+          { session },
+        );
+        await userCollection.insertOne(
+          {
+            Full_Name: companyOwnerName,
+            User_Name: userName,
+            Address: address,
+            Contact: ownerContact,
+            Email: email,
+            Role: role,
+            Password: hashedPassword,
+            Company_Obj_Id: companyAddedResults.insertedId,
+          },
+          { session },
+        );
+        // await companyRegister.save({ session });
+        // await userRegister.save({ session });
+        // const companyAddedResults = await companyRegister.save({ session });
+        // console.log(companyAddedResults);
+      }, transactionOptions);
+      await session.endSession();
+      return res.send(transactionResults);
+    } catch (err) {
+      return res.send({
+        transaction: false,
+        error: err,
+      });
+    }
+  }
+  start();
   return 0;
 };
