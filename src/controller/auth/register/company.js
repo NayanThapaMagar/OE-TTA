@@ -72,8 +72,8 @@ module.exports = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   async function start() {
-    const companyCollection = client.db('registration').collection('company');
-    const userCollection = client.db('registration').collection('user');
+    const companyCollection = client.db('test').collection('companyregisters');
+    const userCollection = client.db('test').collection('userregisters');
     // console.log(companyColasslection);
     // Step 1: Start a Client Session
     const session = client.startSession();
