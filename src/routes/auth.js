@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // importing controller
-// const login = require("../controller/auth/login");
+const login = require('../controller/auth/login');
 const register = require('../controller/auth/register/company');
 // const addUser = require("../controller/auth/addUser");
 // const logout = require("../controller/auth/logout");
@@ -14,7 +14,7 @@ const register = require('../controller/auth/register/company');
 // const authorizeRootUser = require("../middleware/authorization/authorizeRootUser")
 
 // handeling login request
-// router.post("/login", login);
+router.post('/login', login);
 // handeling registering request
 router.post('/register', register);
 // // handeling logout request
