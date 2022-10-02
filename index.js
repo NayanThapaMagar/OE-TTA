@@ -1,12 +1,11 @@
-//importing files
-const express = require("express");
+/* eslint-disable linebreak-style */
+const express = require('express');
 // const cors = require("cors");
-
 // requiring routers
 // const router = require("./src/routes/index");
-const authrouter = require("./src/routes/auth");
+const authrouter = require('./src/routes/auth');
 
-//setting up our app
+// setting up our app
 const app = express();
 const port = 3000;
 
@@ -21,9 +20,8 @@ const port = 3000;
 // create application/json parser
 app.use(express.json());
 
-//route configure
+// route configure
 // app.use("/api", router);
-app.use("/auth", authrouter);
-
-//server start
-app.listen(port, () => console.log("server at ", port));
+app.use('/auth', authrouter);
+// server start
+app.listen(port, () => console.log('server at ', port));
