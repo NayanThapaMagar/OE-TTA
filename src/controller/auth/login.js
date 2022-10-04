@@ -51,7 +51,6 @@ module.exports = async (req, res) => {
             name: user.User_Name,
             contact: user.Contact,
             roleCode: user.Role,
-            userId,
             companyObjId: user.Company_Obj_Id,
           };
           // generating access token
