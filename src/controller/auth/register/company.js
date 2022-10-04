@@ -52,20 +52,20 @@ module.exports = async (req, res) => {
     || !password
     || !confirmPassword
   ) {
-    return res.send({ register: false, message: 'All fields not provided' });
+    return res.send({ registration: false, message: 'All fields not provided' });
   }
   // password validation
   if (password !== confirmPassword) {
-    return res.send({ register: false, message: "Password doesn't match" });
+    return res.send({ registration: false, message: "Password doesn't match" });
   }
   // contact validation
   // console.log(valid.contact(contact));
   // console.log(valid.contact(companyContact));
   if (!valid.contact(companyContact)) {
-    return res.send({ register: false, message: 'Invalid company contact' });
+    return res.send({ registration: false, message: 'Invalid company contact' });
   }
   if (!valid.contact(ownerContact)) {
-    return res.send({ register: false, message: 'Invalid owner contact' });
+    return res.send({ registration: false, message: 'Invalid owner contact' });
   }
 
   // hassing password and adding salt to it
