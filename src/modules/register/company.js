@@ -13,7 +13,7 @@ const companyRegisterSchema = new Schema(
       type: String,
       required: true,
     },
-    Address: {
+    Company_Address: {
       type: String,
       required: true,
     },
