@@ -55,7 +55,7 @@ module.exports = async (req, res) => {
     return res.send({ registration: false, message: 'All fields not provided' });
   }
   // role validation
-  if (role !== 'OWNER101' || role !== 'MANAGER102' || role !== 'EMPLOYEE103') {
+  if (role !== 'ONR-101' && role !== 'MNGR-102' && role !== 'EMPY-103') {
     return res.send({ registration: false, message: 'Invalid Role' });
   }
   // password validation
