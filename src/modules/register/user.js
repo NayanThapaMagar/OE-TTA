@@ -7,35 +7,37 @@ const userRegisterSchema = new Schema(
   {
     Full_Name: {
       type: String,
-      requires: true,
+      required: true,
     },
     User_Name: {
       type: String,
-      requires: true,
+      required: true,
     },
     Address: {
       type: String,
-      requires: true,
+      required: true,
     },
     Contact: {
       type: String,
-      requires: true,
+      unique: true,
+      required: true,
     },
     Email: {
       type: String,
-      requires: true,
+      required: true,
     },
     Role: {
       type: String,
-      requires: true,
+      enum: ['OWNER101', 'MANAGER102', 'EMPLOYEE103'],
+      required: true,
     },
     Password: {
       type: String,
-      requires: true,
+      required: true,
     },
     Company_Obj_Id: {
       type: String,
-      requires: true,
+      required: true,
     },
   },
   { timestamps: true },

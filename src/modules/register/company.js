@@ -7,23 +7,23 @@ const companyRegisterSchema = new Schema(
   {
     Company_Name: {
       type: String,
-      requires: true,
+      required: true,
     },
     Country: {
       type: String,
-      requires: true,
+      required: true,
     },
     Address: {
       type: String,
-      requires: true,
+      required: true,
     },
     Company_Contact: {
       type: String,
-      requires: true,
+      required: true,
     },
     Max_Number_Of_Employee: {
       type: Number,
-      requires: true,
+      required: true,
     },
   },
   { timestamps: true },
