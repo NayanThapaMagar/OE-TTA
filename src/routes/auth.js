@@ -11,6 +11,7 @@ const registerUser = require('../controller/auth/register/user');
 
 // requiring authorization middleware
 const authorizeUserLogin = require('../middleware/authorization/authorizeUserLogin');
+const authorizeOwner = require('../middleware/authorization/authorizeOwner');
 // const authorizeRootUser = require("../middleware/authorization/authorizeRootUser")
 
 // handeling login request
@@ -22,6 +23,6 @@ router.post('/register/company', registerCompany);
 // // handeling refresh access token request
 // router.get("/refreshtoken", authorizeUserLogin, refreshAccessTokenSecret);
 // // handeling request to add users of two different level
-router.post('/register/user', authorizeUserLogin, registerUser);
+router.post('/register/user', authorizeUserLogin, authorizeOwner, registerUser);
 
 module.exports = router;

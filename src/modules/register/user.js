@@ -19,7 +19,6 @@ const userRegisterSchema = new Schema(
     },
     Contact: {
       type: String,
-      unique: true,
       required: true,
     },
     Email: {
@@ -28,7 +27,7 @@ const userRegisterSchema = new Schema(
     },
     Role: {
       type: String,
-      enum: ['OWNER101', 'MANAGER102', 'EMPLOYEE103'],
+      enum: ['ONR-101', 'MNGR-102', 'EMPY-103'],
       required: true,
     },
     Password: {
