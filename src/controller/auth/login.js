@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
           const USER = {
             name: user.User_Name,
             contact: user.Contact,
-            roleCode: user.Role,
+            role: user.Role,
             companyObjId: user.Company_Obj_Id,
           };
           // generating access token
