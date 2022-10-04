@@ -54,13 +54,15 @@ module.exports = async (req, res) => {
   ) {
     return res.send({ registration: false, message: 'All fields not provided' });
   }
+  // role validation
+  if (role !== 'OWNER101' || role !== 'MANAGER102' || role !== 'EMPLOYEE103') {
+    return res.send({ registration: false, message: 'Invalid Role' });
+  }
   // password validation
   if (password !== confirmPassword) {
     return res.send({ registration: false, message: "Password doesn't match" });
   }
   // contact validation
-  // console.log(valid.contact(contact));
-  // console.log(valid.contact(companyContact));
   if (!valid.contact(companyContact)) {
     return res.send({ registration: false, message: 'Invalid company contact' });
   }
