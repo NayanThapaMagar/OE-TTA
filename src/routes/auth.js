@@ -16,12 +16,12 @@ const authorizeUserLogin = require('../middleware/authorization/authorizeUserLog
 // handeling login request
 router.post('/login', login);
 // handeling registering request
-router.post('/register', registerCompany);
+router.post('/register/company', registerCompany);
 // // handeling logout request
 // router.post("/logout", authorizeUserLogin, logout);
 // // handeling refresh access token request
 // router.get("/refreshtoken", authorizeUserLogin, refreshAccessTokenSecret);
 // // handeling request to add users of two different level
-router.post('/addUser', authorizeUserLogin, registerUser);
+router.post('/register/user', authorizeUserLogin, registerUser);
 
 module.exports = router;
