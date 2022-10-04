@@ -22,6 +22,7 @@ module.exports = async (req, res) => {
   const {
     userName,
     fullName,
+    address,
     contact,
     email,
     role,
@@ -32,6 +33,7 @@ module.exports = async (req, res) => {
   if (
     !userName
     || !fullName
+    || !address
     || !contact
     || !email
     || !role
@@ -40,8 +42,13 @@ module.exports = async (req, res) => {
   ) {
     return res.send({ registration: false, message: 'All fields not provided' });
   }
+  // authorization validation
+  // not authorizing manager to add another manager
+  if (req.user.role === 'MNGR-102' && role === 'MNGR-102') {
+    return res.send({ registration: false, message: 'User is not authorizedd' });
+  }
   // role validation
-  if (role !== 'ONR-101' && role !== 'MNGR-102' && role !== 'EMPY-103') {
+  if (role !== 'MNGR-102' && role !== 'EMPY-103') {
     return res.send({ registration: false, message: 'Invalid Role' });
   }
   // password validation
@@ -58,13 +65,27 @@ module.exports = async (req, res) => {
 
   const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-  await UserRegister.findOne({ Contact: contact }).then(async (result) => {
+  await UserRegister.findOne({
+    $and: [
+      {
+        $or: [
+          { Contact: contact },
+          { User_Name: userName }],
+      },
+      {
+        $or: [
+          { Role: 'MNGR-102' },
+          { Role: 'EMPY-103' }],
+      },
+    ],
+  }).then(async (result) => {
     if (result === null) {
       // hassing password and adding salt to it
       const hashedPassword = await bcrypt.hash(password, 10);
       const NewUserRegister = new UserRegister({
         Full_Name: fullName,
         User_Name: userName,
+        Address: address,
         Contact: contact,
         Email: email,
         Role: role,
@@ -73,9 +94,9 @@ module.exports = async (req, res) => {
       });
       await NewUserRegister.save()
         .then(() => res.send({ registration: true, message: 'User Registered Successfully' }))
-        .catch(() => res.send({ registration: false, message: 'Failed to register!' }));
+        .catch((err) => res.send({ error: err, registration: false, message: 'Failed to register!' }));
     } else {
-      return res.send({ registration: false, message: `${contact} is already occupied by ${result.Full_Name}` });
+      return res.send({ registration: false, message: `Contact: ${contact} or username: ${userName} is already occupied by ${result.Full_Name}` });
     }
     return 0;
   })
