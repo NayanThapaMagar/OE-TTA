@@ -18,12 +18,6 @@ module.exports = async (req, res) => {
   // connectiong to database
   await mongo();
 
-  // getting access token from headers
-  const authHeader = req.headers.authorization;
-  const token = authHeader.split(' ')[1];
-
-  const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
   // getting datas(user name, email, contact, password) form body or frontend
   const {
     userName,
@@ -54,18 +48,34 @@ module.exports = async (req, res) => {
   if (!valid.contact(contact)) {
     return res.send({ registration: false, message: 'Invalid owner contact' });
   }
+  // getting access token from headers
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(' ')[1];
 
-  // hassing password and adding salt to it
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const NewUserRegister = new UserRegister({
-    Full_Name: fullName,
-    User_Name: userName,
-    Contact: contact,
-    Email: email,
-    Role: role,
-    Password: hashedPassword,
-    Company_Obj_Id: decoded.companyObjId,
-  });
-  await NewUserRegister.save().then(() => { res.send({ registration: true, message: 'User Registered Successfully' }); }).catch(() => res.send({ registration: false, message: 'Failed to register!' }));
+  const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+  await UserRegister.findOne({ Contact: contact }).then(async (result) => {
+    if (result === null) {
+      // hassing password and adding salt to it
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const NewUserRegister = new UserRegister({
+        Full_Name: fullName,
+        User_Name: userName,
+        Contact: contact,
+        Email: email,
+        Role: role,
+        Password: hashedPassword,
+        Company_Obj_Id: decoded.companyObjId,
+      });
+      await NewUserRegister.save()
+        .then(() => res.send({ registration: true, message: 'User Registered Successfully' }))
+        .catch(() => res.send({ registration: false, message: 'Failed to register!' }));
+    } else {
+      return res.send({ registration: false, message: `${contact} is already occupied by ${result.Full_Name}` });
+    }
+    return 0;
+  })
+    .catch(() => res.send({ registration: false, message: 'Failed to register!' }));
+
   return 0;
 };
