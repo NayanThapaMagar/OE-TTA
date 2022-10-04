@@ -13,7 +13,7 @@ const client = new MongoClient(uri);
 
 // requiring register schema
 // const CompanyRegister = require('../../../modules/register/company');
-// const UserRegister = require('../../../modules/register/user');
+const UserRegister = require('../../../modules/register/user');
 const valid = require('../../../utils/validation');
 
 // CompanyObjId:
@@ -26,12 +26,13 @@ module.exports = async (req, res) => {
   const {
     companyName,
     country,
-    address,
+    companyAddress,
     companyContact,
     maxNumberOfEmployee,
     userName,
     companyOwnerName,
     ownerContact,
+    ownerAddress,
     email,
     role,
     password,
@@ -41,12 +42,13 @@ module.exports = async (req, res) => {
   if (
     !companyName
     || !country
-    || !address
+    || !companyAddress
     || !companyContact
     || !maxNumberOfEmployee
     || !userName
     || !companyOwnerName
     || !ownerContact
+    || !ownerAddress
     || !email
     || !role
     || !password
@@ -110,7 +112,7 @@ module.exports = async (req, res) => {
           {
             Company_Name: companyName,
             Country: country,
-            Address: address,
+            Company_Address: companyAddress,
             Company_Contact: companyContact,
             Max_Number_Of_Employee: maxNumberOfEmployee,
           },
@@ -120,7 +122,7 @@ module.exports = async (req, res) => {
           {
             Full_Name: companyOwnerName,
             User_Name: userName,
-            Address: address,
+            Address: ownerAddress,
             Contact: ownerContact,
             Email: email,
             Role: role,
@@ -143,7 +145,24 @@ module.exports = async (req, res) => {
       });
     }
   }
-  start();
+  await UserRegister.findOne({
+    $and: [
+      {
+        $or: [
+          { Contact: ownerContact },
+          { User_Name: userName }],
+      },
+      { Role: 'ONR-101' },
+    ],
+  }).then(async (result) => {
+    if (result === null) {
+      start();
+    } else {
+      return res.send({ registration: false, message: `Contact: ${ownerContact} or username: ${userName} is already occupied by ${result.Full_Name}` });
+    }
+    return 0;
+  })
+    .catch(() => res.send({ registration: false, message: 'Failed to register!' }));
   // refrence https://github.com/mongodb-developer/nodejs-quickstart/blob/39ad5b3e6f0aa4c7242211ab0d3991ee5de9b0ea/transaction.js#L139
   return 0;
 };
