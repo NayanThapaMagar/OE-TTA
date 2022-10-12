@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
   const { userName, password } = req.body;
 
   if (!userName || !password) {
-    return res.send({
+    return res.status(401).send({
       login: false,
       message: 'Username or password not provided',
     });
@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
         // checking if user exists or not
         if (!user) {
           // user doesn't exist
-          return res.send({ login: false, message: 'Incorrect Username' });
+          return res.status(401).send({ login: false, username: 'Incorrect Username' });
         }
         // user exists
         // checking if the passord is valid or not
@@ -70,15 +70,15 @@ module.exports = async (req, res) => {
         }
         // invalid password
         // login unsucessful
-        return res.send({ login: false, message: 'Incorrect Password' });
+        return res.status(401).send({ login: false, message: 'Incorrect Password' });
         // redirecting to login page
       } catch {
-        return res.send({
+        return res.status(401).send({
           login: false,
           message: 'Failed to login!',
         });
       }
     })
-    .catch((err) => res.send({ error: err, message: 'Unable to find user' }));
+    .catch((err) => res.status(401).send({ error: err, message: 'Unable to find user' }));
   return 0;
 };
