@@ -7,7 +7,7 @@ const authrouter = require('./src/routes/auth');
 
 // setting up our app
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // //setting up cors
 // app.use(
