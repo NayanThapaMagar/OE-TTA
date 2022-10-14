@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
         // checking if user exists or not
         if (!user) {
           // user doesn't exist
-          return res.status(401).send({ login: false, username: 'Incorrect Username' });
+          return res.status(401).send({message: 'Incorrect Username' });
         }
         // user exists
         // checking if the passord is valid or not
@@ -70,7 +70,7 @@ module.exports = async (req, res) => {
         }
         // invalid password
         // login unsucessful
-        return res.status(401).send({ login: false, message: 'Incorrect Password' });
+        return res.status(401).send({message: 'Incorrect Password' });
         // redirecting to login page
       } catch {
         return res.status(401).send({
@@ -79,6 +79,6 @@ module.exports = async (req, res) => {
         });
       }
     })
-    .catch((err) => res.status(401).send({ error: err, message: 'Unable to find user' }));
+    .catch((err) => res.status(401).send({ message: 'Unable to find user' }));
   return 0;
 };
