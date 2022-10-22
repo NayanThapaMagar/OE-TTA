@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 // requiring routers
 // const cors = require("cors");
 const router = require('./src/routes/index');
@@ -7,15 +8,15 @@ const authrouter = require('./src/routes/auth');
 
 // setting up our app
 const app = express();
-const port = 3000;
+const port = 4000;
 
-// //setting up cors
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//   })
-// );
+// setting up cors
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 
 // create application/json parser
 app.use(express.json({ limit: '50mb' }));
