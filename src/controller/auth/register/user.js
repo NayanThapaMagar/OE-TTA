@@ -1,5 +1,6 @@
 // // requiring bcrypt for password encryption
 const bcrypt = require('bcrypt');
+// let validator = require('validator');
 
 // requiring database connection
 // const Transaction = require('mongoose-transactions');

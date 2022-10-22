@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
         // checking if user exists or not
         if (!user) {
           // user doesn't exist
-          return res.send({ login: false, message: 'Incorrect Username' });
+          return res.send({ login: false, message: 'Incorrect Username or Password' });
         }
         // user exists
         // checking if the passord is valid or not
@@ -79,6 +79,6 @@ module.exports = async (req, res) => {
         });
       }
     })
-    .catch((err) => res.send({ error: err, message: 'Unable to find user' }));
+    .catch((err) => res.send({ error: err, message: 'Something went wrong Please try again latter' }));
   return 0;
 };

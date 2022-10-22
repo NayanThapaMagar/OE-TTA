@@ -1,9 +1,10 @@
 // // requiring bcrypt for password encryption
 const bcrypt = require('bcrypt');
+// const validator = require('validator');
+const { MongoClient } = require('mongodb');
 
 // requiring database connection
 // const Transaction = require('mongoose-transactions');
-const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const mongo = require('../../../config/database');
@@ -14,7 +15,7 @@ const client = new MongoClient(uri);
 // requiring register schema
 // const CompanyRegister = require('../../../modules/register/company');
 const UserRegister = require('../../../modules/register/user');
-const valid = require('../../../utils/validation');
+const valid = require('../../../utils/validation'); // if valid returns ture
 
 // CompanyObjId:
 
@@ -70,6 +71,10 @@ module.exports = async (req, res) => {
   }
   if (!valid.contact(ownerContact)) {
     return res.send({ registration: false, message: 'Invalid owner contact' });
+  }
+  // email validation
+  if (!valid.emailExists(email)) {
+    return res.send({ registration: false, message: 'Invalid email' });
   }
 
   // hassing password and adding salt to it
