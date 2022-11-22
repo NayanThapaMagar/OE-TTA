@@ -9,8 +9,16 @@ const timeSheet = new Schema(
       type: String,
       required: true,
     },
-    Date: {
-      type: Date,
+    Year: {
+      type: Number,
+      required: true,
+    },
+    Month: {
+      type: Number,
+      required: true,
+    },
+    Day: {
+      type: Number,
       required: true,
     },
     StartedAt: {

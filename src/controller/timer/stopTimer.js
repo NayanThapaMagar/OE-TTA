@@ -15,7 +15,18 @@ module.exports = async (req, res) => {
       return res.status(500).send({ status: 'Something Went Wrong' });
     }
     const currentDate = new Date();
-
+    const string = JSON.stringify(currentDate);
+    const myArray0 = string.split('"');
+    const myArray1 = myArray0[1];
+    const myArray2 = myArray1.split('T');
+    const onlyDate = myArray2[0];
+    const myArray = onlyDate.split('-');
+    const currentYear = myArray[0];
+    const currentMonth = myArray[1];
+    const currentDay = myArray[2];
+    // console.log(currentYear);
+    // console.log(currentMonth);
+    // console.log(currentDay);
     // connectiong to database
     await mongo();
 
@@ -26,7 +37,9 @@ module.exports = async (req, res) => {
     const totalTime = await timeDiffCalculator(isActive.Date, currentDate);
     const NewTimeSheet = new timeSheet({
       UserId: userId,
-      Date: currentDate,
+      Year: currentYear,
+      Month: currentMonth,
+      Day: currentDay,
       StartedAt: isActive.Date,
       EndedAt: currentDate,
       TotalTime: totalTime * 60, // in minutes
@@ -34,10 +47,10 @@ module.exports = async (req, res) => {
     const uploadResult = await NewTimeSheet.save()
       .then()
       .catch(() => 0);
-    if (!uploadResult) return res.status(400).send({ status: 'failure' }); // if error
+    if (!uploadResult) return res.status(400).send({ status: 'up failure' }); // if error
     const del = await activeSession.deleteOne({ UserId: userId }).then()
       .catch(() => 0);
-    if (!del) return res.status(400).send({ status: 'failure' }); // if error
+    if (!del) return res.status(400).send({ status: 'del failure' }); // if error
     return res.status(200).send({ status: 'success' });
   } catch (e) {
     return res.send({ status: 'failure', message: 'Someting went wrong' });
