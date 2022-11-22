@@ -1,37 +1,33 @@
-/* eslint-disable no-buffer-constructor */
-/* eslint-disable prefer-destructuring */
-const fs = require('fs-extra');
-const mime = require('mime');
-// const path = require('path');
+/* eslint-disable no-unused-vars */
+const isBase64 = require('is-base64');
+const { cloudinary } = require('../../utils/cloudinary');
+const getUserId = require('../../utils/getUserId');
 
 module.exports = async (req, res) => {
-  // to declare some path to store your converted image
   try {
-    const imageName = req.body.fileName;
-    const matches = req.body.base64image.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
-    const response = {};
-
-    if (matches.length !== 3) {
-      return res.send({ status: 'Invalid input string' });
+    const imageFileWithMime = req.body.base64image;
+    const myArray = imageFileWithMime.split(',');
+    const imageFile = myArray[1];
+    if (!imageFile || !isBase64(imageFile)) {
+      return res.status(400).send({ status: 'Invalid image' });
     }
-
-    response.type = matches[1];
-    // response.data = new Buffer(matches[2], 'base64');
-    // response.data = new Buffer(matches[2], 'base64');
-    response.data = Buffer.from(matches[2], 'base64');
-    const decodedImg = response;
-    console.log(decodedImg);
-    const imageBuffer = decodedImg.data;
-    const type = decodedImg.type;
-    const extension = mime.getExtension(type);
-    const fileName = `${imageName}.${extension}`;
-    // const uploadPath = 'images';
-    await fs.writeFileSync(`./src/files/images/screenshots/${fileName}`, imageBuffer);
-    // E:\Online Employee Work trcking system\src\files\images\screenshots
-    // await fs.writeFileSync(path.join(uploadPath, fileName), imageBuffer);
-    return res.send({ status: 'success' });
+    const matches = imageFileWithMime.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+    if (matches == null) {
+      return res.status(400).send({ status: 'Invalid image' });
+    }
+    if (matches.length !== 3) {
+      return res.status(400).send({ status: 'Invalid image' });
+    }
+    const userId = await getUserId(req);
+    if (!userId) { // unable to get user id
+      return res.status(500).send({ status: 'Something Went Wrong' });
+    }
+    const uploadResponse = await cloudinary.uploader.upload(imageFileWithMime, {
+      upload_preset: 'OETTA',
+      tags: userId,
+    });
+    return res.status(200).json({ Status: 'Success' });
   } catch (e) {
-    console.log(e);
-    return res.send({ status: 'failure' });
+    return res.status(500).send({ status: 'Something Went Wrong' });
   }
 };

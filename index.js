@@ -19,7 +19,7 @@ app.use(
 );
 
 // create application/json parser
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '500mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // route configure

@@ -59,22 +59,22 @@ module.exports = async (req, res) => {
   }
   // role validation
   if (role !== 'ONR-101' && role !== 'MNGR-102' && role !== 'EMPY-103') {
-    return res.send({ registration: false, message: 'Invalid Role' });
+    return res.status(400).send({ registration: false, message: 'Invalid Role' });
   }
   // password validation
   if (password !== confirmPassword) {
-    return res.send({ registration: false, message: "Password doesn't match" });
+    return res.status(400).send({ registration: false, message: "Password doesn't match" });
   }
   // contact validation
   if (!valid.contact(companyContact)) {
-    return res.send({ registration: false, message: 'Invalid company contact' });
+    return res.status(400).send({ registration: false, message: 'Invalid company contact' });
   }
   if (!valid.contact(ownerContact)) {
-    return res.send({ registration: false, message: 'Invalid owner contact' });
+    return res.status(400).send({ registration: false, message: 'Invalid owner contact' });
   }
   // email validation
   if (!valid.emailExists(email)) {
-    return res.send({ registration: false, message: 'Invalid email' });
+    return res.status(400).send({ registration: false, message: 'Invalid email' });
   }
 
   // hassing password and adding salt to it
@@ -83,7 +83,6 @@ module.exports = async (req, res) => {
   async function start() {
     const companyCollection = client.db('test').collection('companyregisters');
     const userCollection = client.db('test').collection('userregisters');
-    // console.log(companyColasslection);
     // Step 1: Start a Client Session
     const session = client.startSession();
     // Step 2: Optional. Define options for the transaction
@@ -93,26 +92,8 @@ module.exports = async (req, res) => {
       writeConcern: { w: 'majority' },
     };
     try {
+      // eslint-disable-next-line no-unused-vars
       const transactionResults = await session.withTransaction(async () => {
-        // const companyRegister = new CompanyRegister({
-        //   Company_Name: companyName,
-        //   Country: country,
-        //   Address: address,
-        //   Company_Contact: companyContact,
-        //   Max_Number_Of_Employee: maxNumberOfEmployee,
-        // });
-        // // console.log(companyRegister);
-        // const userRegister = new UserRegister({
-        // Full_Name: companyOwnerName,
-        // User_Name: userName,
-        // Address: address,
-        // Contact: ownerContact,
-        // Email: email,
-        // Role: role,
-        // Password: hashedPassword,
-        // // eslint-disable-next-line no-underscore-dangle
-        // Company_Obj_Id: companyRegister._id,
-        // });
         const companyAddedResults = await companyCollection.insertOne(
           {
             Company_Name: companyName,
@@ -136,17 +117,12 @@ module.exports = async (req, res) => {
           },
           { session },
         );
-        // await companyRegister.save({ session });
-        // await userRegister.save({ session });
-        // const companyAddedResults = await companyRegister.save({ session });
-        // console.log(companyAddedResults);
       }, transactionOptions);
       await session.endSession();
-      return res.send(transactionResults);
+      return res.status(200).send({ message: 'Registered Succesfully' });
     } catch (err) {
-      return res.send({
-        transaction: false,
-        error: err,
+      return res.status(409).send({
+        message: 'Registration Failed',
       });
     }
   }
@@ -163,11 +139,11 @@ module.exports = async (req, res) => {
     if (result === null) {
       start();
     } else {
-      return res.send({ registration: false, message: `Contact: ${ownerContact} or username: ${userName} is already occupied by ${result.Full_Name}` });
+      return res.status(400).send({ registration: false, message: 'Contact or username is already occupied' });
     }
     return 0;
   })
-    .catch(() => res.send({ registration: false, message: 'Failed to register!' }));
+    .catch(() => res.status(401).send({ registration: false, message: 'Failed to register!' }));
   // refrence https://github.com/mongodb-developer/nodejs-quickstart/blob/39ad5b3e6f0aa4c7242211ab0d3991ee5de9b0ea/transaction.js#L139
   return 0;
 };

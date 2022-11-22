@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 // requiring bcrypt for password encryption
 const bcrypt = require('bcrypt');
 
@@ -26,15 +27,14 @@ module.exports = async (req, res) => {
     });
   }
   let user;
-  let userId = null;
+  // let userId = null;
   // console.log(user);
   // finding for user with provided userName
   await User.findOne({ User_Name: userName })
     .then(async (result) => {
       // assigning the result value to user variable to check if user exists or not
       user = result;
-      // eslint-disable-next-line no-underscore-dangle
-      userId = user._id;
+      // userId = user._id;
       try {
         // checking if user exists or not
         if (!user) {
@@ -52,6 +52,7 @@ module.exports = async (req, res) => {
             contact: user.Contact,
             role: user.Role,
             companyObjId: user.Company_Obj_Id,
+            userId: user._id,
           };
           // generating access token
           const accessToken = jwt.sign(USER, process.env.ACCESS_TOKEN_SECRET, {
@@ -61,11 +62,11 @@ module.exports = async (req, res) => {
           res.header({ Authorization: `Bearer ${accessToken}` });
 
           // sending response back
-          return res.json({
+          return res.status(200).json({
             login: true,
             message: 'Login Successful',
             accessToken,
-            _id: userId,
+            // _id: userId,
           });
         }
         // invalid password
@@ -79,6 +80,6 @@ module.exports = async (req, res) => {
         });
       }
     })
-    .catch((err) => res.send({ error: err, message: 'Something went wrong Please try again latter' }));
+    .catch((err) => res.status(401).send({ error: err, message: 'Something went wrong Please try again latter' }));
   return 0;
 };
