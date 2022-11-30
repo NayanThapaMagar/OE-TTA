@@ -4,6 +4,7 @@ const router = express.Router();
 
 // importing controller
 const login = require('../controller/auth/login');
+const logout = require('../controller/auth/logout');
 const registerCompany = require('../controller/auth/register/company');
 const registerUser = require('../controller/auth/register/user');
 // const logout = require("../controller/auth/logout");
@@ -16,7 +17,8 @@ const authorizeLevelOneUser = require('../middleware/authorization/authorizeLeve
 // const authorizeLevelTwoUser = require("../middleware/authorization/authorizeLevelTwoUser")
 
 // handeling login request
-router.post('/login', login);
+router.post('/login', authorizeUserLogin, login);
+router.post('/logout', logout);
 // handeling registering request
 router.post('/register/company', registerCompany);
 // // handeling logout request
