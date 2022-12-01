@@ -9,6 +9,7 @@ const filterScreenshot = require('../controller/screenshot/filterScreenshot');
 const startTimer = require('../controller/timer/startTimer');
 const stopTimer = require('../controller/timer/stopTimer');
 const daily = require('../controller/totalWorkHours/daily');
+const getUsers = require('../controller/users/getUsers');
 
 // requiring authorization middleware
 const authorizeUserLogin = require('../middleware/authorization/authorizeUserLogin');
@@ -22,5 +23,6 @@ router.get('/screenshot/filterScreenshot', authorizeUserLogin, filterScreenshot)
 router.get('/timer/startTimer', authorizeUserLogin, startTimer);
 router.get('/timer/stopTimer', authorizeUserLogin, stopTimer);
 router.get('/totalWorkHours/daily', authorizeUserLogin, daily);
+router.get('/users/getUsers', authorizeUserLogin, getUsers);
 
 module.exports = router;

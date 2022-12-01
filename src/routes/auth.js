@@ -17,8 +17,8 @@ const authorizeLevelOneUser = require('../middleware/authorization/authorizeLeve
 // const authorizeLevelTwoUser = require("../middleware/authorization/authorizeLevelTwoUser")
 
 // handeling login request
-router.post('/login', authorizeUserLogin, login);
-router.post('/logout', logout);
+router.post('/login', login);
+router.post('/logout', authorizeUserLogin, logout);
 // handeling registering request
 router.post('/register/company', registerCompany);
 // // handeling logout request

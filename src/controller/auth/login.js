@@ -66,7 +66,7 @@ module.exports = async (req, res) => {
             login: true,
             message: 'Login Successful',
             accessToken,
-            // _id: userId,
+            userRole: user.Role,
           });
         }
         // invalid password
