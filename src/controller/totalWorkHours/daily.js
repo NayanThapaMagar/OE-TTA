@@ -45,7 +45,6 @@ module.exports = async (req, res) => {
         },
       },
     ]).then().catch();
-    console.log(searchResult);
     return res.status(200).send({ status: 'success', searchResult });
   } catch (e) {
     return res.send({ status: 'failure', message: 'Someting went wrong', e });
