@@ -10,6 +10,7 @@ const startTimer = require('../controller/timer/startTimer');
 const stopTimer = require('../controller/timer/stopTimer');
 const daily = require('../controller/totalWorkHours/daily');
 const getUsers = require('../controller/users/getUsers');
+const getProfile = require('../controller/users/getProfile');
 
 // requiring authorization middleware
 const authorizeUserLogin = require('../middleware/authorization/authorizeUserLogin');
@@ -24,5 +25,6 @@ router.get('/timer/startTimer', authorizeUserLogin, startTimer);
 router.get('/timer/stopTimer', authorizeUserLogin, stopTimer);
 router.get('/totalWorkHours/daily', authorizeUserLogin, daily);
 router.get('/users/getUsers', authorizeUserLogin, getUsers);
+router.get('/users/getProfile', authorizeUserLogin, getProfile);
 
 module.exports = router;
